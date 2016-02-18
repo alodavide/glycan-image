@@ -1,0 +1,20 @@
+{
+  "name": "glycan-image",
+  "version": "0.0.1",
+  "description": "Glycan Image render",
+  "license": "MIT",
+  "main": "glycan-image.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "ignore": [
+    "**/.*",
+    "bower_components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.4",
+    "iron-image": "PolymerElements/iron-image#^1.2.2",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.1.1"
+  }
+}

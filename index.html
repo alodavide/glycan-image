@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title>Glycan Image</title>
+
+    <!-- Imports polyfill -->
+    <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <!-- Imports custom element -->
+    <link rel="import" href="glycan-image.html">
+
+</head>
+<body>
+
+    <!-- Runs custom element -->
+    <glycan-image structure="RES
+1b:x-dglc-HEX-1:5
+2s:n-acetyl
+3b:b-dgal-HEX-1:5
+4b:b-dglc-HEX-1:5
+5s:n-acetyl
+LIN
+1:1d(2+1)2n
+2:1o(3+1)3d
+3:1o(6+1)4d
+4:4d(2+1)5n
+"
+                  server="http://glycoproteome.expasy.org/substructuresearch/service/imageGenerator"></glycan-image>
+
+</body>
+</html>

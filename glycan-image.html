@@ -1,0 +1,42 @@
+<!-- Imports polymer -->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-image/iron-image.html">
+
+<!-- Defines element markup -->
+<dom-module id="glycan-image" >
+    <template>
+        <iron-ajax
+            auto
+            url="{{server}}"
+            params= '{"glycoCtCode":"{{structure}}"}'
+            contentType=application/json; charset=utf-8",
+            method="POST"
+            on-response="handleResponse"
+            debounce-duration="300"></iron-ajax>
+
+        <iron-image></iron-image>
+    </template>
+    <!-- Registers custom element -->
+    <script>
+    Polymer({
+        is: 'glycan-image',
+        properties:{
+            structure: String,
+            server: String
+        },
+
+ /*       ready: function(){
+            this.$.get_image.url = this.server;
+            this.$.get_image.params = '{"glycoCtCode":"'+this.structure+'"}';
+            this.$.get_image.generateRequest();
+        },*/
+
+        handleResponse: function(ev, res){
+            var image = Polymer.dom(this.root).querySelector('iron-image');
+            image.src = "data:image/jpg;base64"+res;
+        }
+
+    });
+    </script>
+</dom-module>
