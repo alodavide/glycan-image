@@ -7,34 +7,48 @@
 <dom-module id="glycan-image" >
     <template>
         <iron-ajax
-            auto
+            id="imageAjaxCall"
             url="{{server}}"
             params= '{"glycoCtCode":"{{structure}}"}'
             contentType=application/json; charset=utf-8",
             method="POST"
             on-response="handleResponse"
+            on-error="handleError"
             debounce-duration="300"></iron-ajax>
 
-        <iron-image></iron-image>
+        <iron-image id="glycanImage"></iron-image>
     </template>
     <!-- Registers custom element -->
     <script>
     Polymer({
         is: 'glycan-image',
         properties:{
-            structure: String,
+            structure: {
+                type: String,
+                observer: '_structureChanged'
+            },
             server: String
         },
 
- /*       ready: function(){
-            this.$.get_image.url = this.server;
-            this.$.get_image.params = '{"glycoCtCode":"'+this.structure+'"}';
-            this.$.get_image.generateRequest();
-        },*/
-
         handleResponse: function(ev, res){
-            var image = Polymer.dom(this.root).querySelector('iron-image');
+            var image = this.$.glycanImage;
             image.src = "data:image/jpg;base64"+res;
+        },
+
+        handleError: function(ev, res){
+            var image = this.$.glycanImage;
+            image.src = Polymer.resolveURL("img/sorry.jpg")
+        },
+
+        _structureChanged: function(newValue, oldValue) {
+            if(newValue){
+                var call = this.$.imageAjaxCall;
+                call.params = '{"glycoCtCode":"{{'+this.structure+'}}"}';
+                call.generateRequest();
+            } else{
+                var image = this.$.glycanImage;
+                image.src = Polymer.resolveURL("img/sorry.jpg")
+            }
         }
 
     });
