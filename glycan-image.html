@@ -8,46 +8,53 @@
     <template>
         <iron-ajax
             id="imageAjaxCall"
-            url="{{server}}"
-            params= '{"glycoCtCode":"{{structure}}"}'
-            contentType=application/json; charset=utf-8",
+            contentType="application/json"
             method="POST"
             on-response="handleResponse"
             on-error="handleError"
             debounce-duration="300"></iron-ajax>
 
-        <iron-image id="glycanImage"></iron-image>
+        <div id="glycanImage"></div>
     </template>
     <!-- Registers custom element -->
     <script>
     Polymer({
         is: 'glycan-image',
         properties:{
+            notation: String,
+            server: String,
             structure: {
                 type: String,
                 observer: '_structureChanged'
-            },
-            server: String
+            }
         },
 
-        handleResponse: function(ev, res){
+        handleResponse: function(data){
             var image = this.$.glycanImage;
-            image.src = "data:image/jpg;base64"+res;
+            image.innerHTML = new window.XMLSerializer().serializeToString(data.detail.response);
+
         },
 
         handleError: function(ev, res){
             var image = this.$.glycanImage;
-            image.src = Polymer.resolveURL("img/sorry.jpg")
+            image.src = this.resolveUrl("img/sorry.jpg");
         },
 
         _structureChanged: function(newValue, oldValue) {
             if(newValue){
                 var call = this.$.imageAjaxCall;
-                call.params = '{"glycoCtCode":"{{'+this.structure+'}}"}';
+                if(this.server.charAt(this.server.length - 1) === "/"){
+                    call.url= this.server+"utils/image/generate"
+                } else {
+                    call.url= this.server+"/utils/image/generate"
+                }
+                call.handleAs="xml";
+                call.contentType ="application/json";
+                call.body = '{"glycoCtCode":"'+this.structure+'", "notation":"'+this.notation+'"}';
                 call.generateRequest();
             } else{
                 var image = this.$.glycanImage;
-                image.src = Polymer.resolveURL("img/sorry.jpg")
+                image.src = this.resolveUrl("img/sorry.jpg")
             }
         }
 
