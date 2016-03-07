@@ -5,6 +5,7 @@
 
 <!-- Defines element markup -->
 <dom-module id="glycan-image" >
+    <
     <template>
         <iron-ajax
             id="imageAjaxCall"
@@ -14,7 +15,7 @@
             on-error="handleError"
             debounce-duration="300"></iron-ajax>
 
-        <div id="glycanImage"></div>
+        <iron-image id="glycanImage"></iron-image>
     </template>
     <!-- Registers custom element -->
     <script>
@@ -44,9 +45,9 @@
             if(newValue){
                 var call = this.$.imageAjaxCall;
                 if(this.server.charAt(this.server.length - 1) === "/"){
-                    call.url= this.server+"utils/image/generate"
+                    call.url= this.server+"glycoUtils/utils/image/generate"
                 } else {
-                    call.url= this.server+"/utils/image/generate"
+                    call.url= this.server+"/glycoUtils/utils/image/generate"
                 }
                 call.handleAs="xml";
                 call.contentType ="application/json";
