@@ -1,23 +1,22 @@
 <!-- Imports polymer -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
-<link rel="import" href="../iron-image/iron-image.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-
 
 <!-- Defines element markup -->
 <dom-module id="glycan-image" >
+    <style>
+        svg {
+            max-width: 100%;
+            height: auto;
+            width: auto\9;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            width: auto\9;
+        }
+    </style>
     <template>
-        <style>
-            :host {
-                position: relative;
-                @apply(--layout-fit);
-            }
-            svg {
-                position: relative;
-            }
-        </style>
-
         <iron-ajax
             id="imageAjaxCall"
             content-type="application/json"
@@ -28,55 +27,66 @@
             debounce-duration="300">
         </iron-ajax>
 
+
+
     </template>
     <!-- Registers custom element -->
     <script>
-    Polymer({
-        is: 'glycan-image',
-        properties:{
-            notation: String,
-            server: String,
-            structure: {
-                type: String,
-                observer: '_structureChanged'
-            }
-        },
-
-        handleResponse: function(data){
-            var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
-            Polymer.dom(this.root).innerHTML = serialXML;
-            var svgElement = this.$$("svg");
-            var bbox = svgElement.getBBox();
-            svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
-        },
-
-        handleError: function(ev, res){
-            this._sorryImage();
-        },
-
-        _structureChanged: function(newValue, oldValue) {
-            if(newValue){
-                var call = this.$.imageAjaxCall;
-                if(this.server.charAt(this.server.length - 1) === "/"){
-                    call.url= this.server+"glycoUtils/utils/image/generate"
-                } else {
-                    call.url= this.server+"/glycoUtils/utils/image/generate"
+        Polymer({
+            is: 'glycan-image',
+            properties:{
+                notation: String,
+                server: String,
+                structure: {
+                    type: String,
+                    observer: '_structureChanged'
                 }
-                call.body = '{"glycoCtCode":"'+this.structure+'", "notation":"'+this.notation+'"}';
-                call.generateRequest();
-            } else{
+            },
+
+            handleResponse: function(data){
+
+                //var image = document.createElement("img");
+                var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
+                //image.src ="data:image/svg+xml;base64,"+window.btoa(serialXML);
+                //Polymer.dom(this.root).appendChild(image);
+                Polymer.dom(this.root).innerHTML = serialXML;
+                var svgElement = this.$$("svg");
+                var bbox = svgElement.getBBox();
+                svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
+            },
+
+            handleError: function(ev, res){
                 this._sorryImage();
+            },
+
+            _structureChanged: function(newValue, oldValue) {
+                if(newValue){
+                    var call = this.$.imageAjaxCall;
+                    if(this.server.charAt(this.server.length - 1) === "/"){
+                        call.url= this.server+"glycoUtils/utils/image/generate"
+                    } else {
+                        call.url= this.server+"/glycoUtils/utils/image/generate"
+                    }
+                    call.body = '{"glycoCtCode":"'+this.structure+'", "notation":"'+this.notation+'"}';
+                    call.generateRequest();
+                } else{
+                    this._sorryImage();
+                }
+            },
+
+            _sorryImage: function(){
+
+                var image = document.createElement("img");
+                image.src = this.resolveUrl("img/sorry.jpg");
+
+                Polymer.dom(this.root).appendChild(image);
+
+                /*image.style.maxWidth = "100%";
+                 image.style.maxHeight = "100%";
+                 Polymer.dom(this.root).appendChild(image);
+                 */
             }
-        },
 
-        _sorryImage: function(){
-            var image = document.createElement('img');
-            image.src = this.resolveUrl("img/sorry.jpg")
-            image.style.maxWidth = "100%";
-            image.style.maxHeight = "100%";
-            Polymer.dom(this.root).appendChild(image);
-        }
-
-    });
+        });
     </script>
 </dom-module>
