@@ -2,20 +2,32 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
 
 <!-- Defines element markup -->
 <dom-module id="glycan-image" >
-    <
     <template>
+        <style>
+            :host {
+                position: relative;
+                @apply(--layout-fit);
+            }
+            svg {
+                position: relative;
+            }
+        </style>
+
         <iron-ajax
             id="imageAjaxCall"
-            contentType="application/json"
+            content-type="application/json"
+            handle-as="xml"
             method="POST"
             on-response="handleResponse"
             on-error="handleError"
-            debounce-duration="300"></iron-ajax>
+            debounce-duration="300">
+        </iron-ajax>
 
-        <iron-image id="glycanImage"></iron-image>
     </template>
     <!-- Registers custom element -->
     <script>
@@ -31,14 +43,15 @@
         },
 
         handleResponse: function(data){
-            var image = this.$.glycanImage;
-            image.innerHTML = new window.XMLSerializer().serializeToString(data.detail.response);
-
+            var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
+            Polymer.dom(this.root).innerHTML = serialXML;
+            var svgElement = this.$$("svg");
+            var bbox = svgElement.getBBox();
+            svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
         },
 
         handleError: function(ev, res){
-            var image = this.$.glycanImage;
-            image.src = this.resolveUrl("img/sorry.jpg");
+            this._sorryImage();
         },
 
         _structureChanged: function(newValue, oldValue) {
@@ -49,14 +62,19 @@
                 } else {
                     call.url= this.server+"/glycoUtils/utils/image/generate"
                 }
-                call.handleAs="xml";
-                call.contentType ="application/json";
                 call.body = '{"glycoCtCode":"'+this.structure+'", "notation":"'+this.notation+'"}';
                 call.generateRequest();
             } else{
-                var image = this.$.glycanImage;
-                image.src = this.resolveUrl("img/sorry.jpg")
+                this._sorryImage();
             }
+        },
+
+        _sorryImage: function(){
+            var image = document.createElement('img');
+            image.src = this.resolveUrl("img/sorry.jpg")
+            image.style.maxWidth = "100%";
+            image.style.maxHeight = "100%";
+            Polymer.dom(this.root).appendChild(image);
         }
 
     });
