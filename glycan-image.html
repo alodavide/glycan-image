@@ -45,14 +45,13 @@
 
             handleResponse: function(data){
 
-                //var image = document.createElement("img");
+
                 var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
-                //image.src ="data:image/svg+xml;base64,"+window.btoa(serialXML);
-                //Polymer.dom(this.root).appendChild(image);
                 Polymer.dom(this.root).innerHTML = serialXML;
                 var svgElement = this.$$("svg");
                 var bbox = svgElement.getBBox();
                 svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
+                svgElement.setAttribute("width",bbox.width);
             },
 
             handleError: function(ev, res){
@@ -80,11 +79,6 @@
                 image.src = this.resolveUrl("img/sorry.jpg");
 
                 Polymer.dom(this.root).appendChild(image);
-
-                /*image.style.maxWidth = "100%";
-                 image.style.maxHeight = "100%";
-                 Polymer.dom(this.root).appendChild(image);
-                 */
             }
 
         });
