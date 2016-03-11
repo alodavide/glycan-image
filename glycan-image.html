@@ -44,8 +44,6 @@
             },
 
             handleResponse: function(data){
-
-
                 var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
                 Polymer.dom(this.root).innerHTML = serialXML;
                 var svgElement = this.$$("svg");
@@ -54,11 +52,11 @@
                 svgElement.setAttribute("width",bbox.width);
             },
 
-            handleError: function(ev, res){
+            handleError: function(){
                 this._sorryImage();
             },
 
-            _structureChanged: function(newValue, oldValue) {
+            _structureChanged: function(newValue) {
                 if(newValue){
                     var call = this.$.imageAjaxCall;
                     if(this.server.charAt(this.server.length - 1) === "/"){
@@ -74,10 +72,8 @@
             },
 
             _sorryImage: function(){
-
                 var image = document.createElement("img");
                 image.src = this.resolveUrl("img/sorry.jpg");
-
                 Polymer.dom(this.root).appendChild(image);
             }
 
