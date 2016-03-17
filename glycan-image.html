@@ -66,6 +66,7 @@
 
             _sorryImage: function(){
                 var image = document.createElement("img");
+                image.style.maxWidth="400px";
                 image.src = this.resolveUrl("img/sorry.jpg");
                 Polymer.dom(this.root).appendChild(image);
             },
