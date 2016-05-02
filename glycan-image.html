@@ -65,11 +65,16 @@
             },
 
             _sorryImage: function(){
-                var image = document.createElement("img");
-                image.style.maxWidth="400px";
-                image.src = this.resolveUrl("img/sorry.jpg");
-                Polymer.dom(this.root).appendChild(image);
+                var sorryImage = document.getElementById("sorryImage");
+                if(sorryImage === null){
+                    var image = document.createElement("img");
+                    image.id = "sorryImage";
+                    image.src = this.resolveUrl("img/sorry.jpg");
+                    image.style.maxWidth = "300px";
+                    Polymer.dom(this.root).appendChild(image);
+                }
             },
+
 
             _serverCall: function(glycanStructure,notation){
                 if(glycanStructure && notation){
