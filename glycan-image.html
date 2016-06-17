@@ -26,6 +26,7 @@
             on-error="handleError"
             debounce-duration="300">
         </iron-ajax>
+
     </template>
     <!-- Registers custom element -->
     <script>
@@ -44,6 +45,7 @@
             },
 
             handleResponse: function(data){
+
                 var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
                 Polymer.dom(this.root).innerHTML = serialXML;
                 var svgElement = this.$$("svg");
@@ -65,7 +67,7 @@
             },
 
             _sorryImage: function(){
-                var sorryImage = document.getElementById("sorryImage");
+                var sorryImage = this.$.sorryImage;
                 if(sorryImage === null){
                     var image = document.createElement("img");
                     image.id = "sorryImage";
@@ -89,7 +91,6 @@
                     this._sorryImage();
                 }
             }
-
         });
     </script>
 </dom-module>
