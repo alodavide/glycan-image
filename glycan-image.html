@@ -18,79 +18,77 @@
     </style>
     <template>
         <iron-ajax
-            id="imageAjaxCall"
-            content-type="application/json"
-            handle-as="xml"
-            method="POST"
-            on-response="handleResponse"
-            on-error="handleError"
-            debounce-duration="300">
+                id="imageAjaxCall"
+                content-type="application/json"
+                handle-as="xml"
+                method="POST"
+                on-response="handleResponse"
+                on-error="handleError"
+                debounce-duration="300">
         </iron-ajax>
 
     </template>
     <!-- Registers custom element -->
     <script>
-        Polymer({
-            is: 'glycan-image',
-            properties:{
-                notation: {
-                    type: String,
-                    observer: '_notationChanged'
-                },
-                server: String,
-                structure: {
-                    type: String,
-                    observer: '_structureChanged'
-                }
-            },
+      Polymer({
+        is: 'glycan-image',
+        properties:{
+          server:{
+            type: String,
+            reflectToAttribute: true
+          },
+          notation: {
+            type: String,
+          },
+          structure: {
+            type: String,
+          }
+        },
 
-            handleResponse: function(data){
+        observers: [
+          'serverCall(structure,notation,server)'
+        ],
 
-                var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
-                Polymer.dom(this.root).innerHTML = serialXML;
-                var svgElement = this.$$("svg");
-                var bbox = svgElement.getBBox();
-                svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
-                svgElement.setAttribute("width",bbox.width);
-            },
+        handleResponse: function(data){
 
-            handleError: function(){
-                this._sorryImage();
-            },
+          var serialXML= new window.XMLSerializer().serializeToString(data.detail.response);
+          Polymer.dom(this.root).innerHTML = serialXML;
+          var svgElement = this.$$("svg");
+          var bbox = svgElement.getBBox();
+          svgElement.setAttribute("viewBox","0 0 "+bbox.width+" "+bbox.height);
+          svgElement.setAttribute("width",bbox.width);
+        },
 
-            _structureChanged: function(newValue) {
-                this._serverCall(newValue,this.notation);
-            },
+        handleError: function(){
+          this._sorryImage();
+        },
 
-            _notationChanged: function(newValue){
-                this._serverCall(this.structure,newValue);
-            },
 
-            _sorryImage: function(){
-                var sorryImage = this.$.sorryImage;
-                if(sorryImage === null){
-                    var image = document.createElement("img");
-                    image.id = "sorryImage";
-                    image.src = this.resolveUrl("img/sorry.jpg");
-                    image.style.maxWidth = "300px";
-                    Polymer.dom(this.root).appendChild(image);
-                }
-            },
+        _sorryImage: function(){
+          var sorryImage = this.$.sorryImage;
+          if(sorryImage === null){
+            var image = document.createElement("img");
+            image.id = "sorryImage";
+            image.src = this.resolveUrl("img/sorry.jpg");
+            image.style.maxWidth = "300px";
+            Polymer.dom(this.root).appendChild(image);
+          }
+        },
 
-            _serverCall: function(glycanStructure,notation){
-                if(glycanStructure && notation){
-                    var call = this.$.imageAjaxCall;
-                    if(this.server.charAt(this.server.length - 1) === "/"){
-                        call.url= this.server+"glycoUtils/utils/image/generate"
-                    } else {
-                        call.url= this.server+"/glycoUtils/utils/image/generate"
-                    }
-                    call.body = '{"glycoCtCode":"'+glycanStructure+'", "notation":"'+notation+'"}';
-                    call.generateRequest();
-                } else{
-                    this._sorryImage();
-                }
+        serverCall: function(structure,notation,server){
+          if(structure && notation && server){
+            var call = this.$.imageAjaxCall;
+            if(this.server.charAt(this.server.length - 1) === "/"){
+              call.url= this.server+"glycoUtils/utils/image/generate"
+            } else {
+              call.url= this.server+"/glycoUtils/utils/image/generate"
             }
-        });
+            call.body = '{"glycoCtCode":"'+structure+'", "notation":"'+notation+'"}';
+            call.generateRequest();
+          } else{
+            this._sorryImage();
+          }
+        }
+      });
     </script>
 </dom-module>
